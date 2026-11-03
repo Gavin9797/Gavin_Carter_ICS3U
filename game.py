@@ -1,6 +1,10 @@
 import pygame
+import os
 
 pygame.init()
+
+# set the directory for the image
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 clock = pygame.time.Clock()
 
@@ -10,13 +14,17 @@ pygame.display.set_caption("Geometry Dash Ripoff")
 screen_width = 800
 screen_height = 600
 
-bg_image = pygame.image.load("images.png").convert
+bg_image = pygame.image.load("images.png").convert() #load the image
+bg_image = pygame.transform.scale(bg_image, (screen_width, 550)) #set the image to be the same resolution as the screen
+
 bg_x = 0
 scroll_speed = 2
 
 #COLORS
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
+GREEN = (255, 255, 0)
+BLACK = (0, 0, 0)
 SKY_BLUE = (135, 206, 235)
 BLUE = (0, 0, 255)
 
@@ -87,6 +95,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    bg_x = background(bg_x, scroll_speed, screen_width)
+
+    screen.blit(bg_image, (bg_x, 0))
+    screen.blit(bg_image, (bg_x + screen_width, 0))
+
     player_x, player_y, velocity_y, is_jumping = player_movement(player_x, player_y, velocity_y, is_jumping, speed, jump_force, gravity, screen_width, player_size, floor_y)
 
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
@@ -95,12 +108,10 @@ while running:
     if player_rect.colliderect(enemy_rect):
         running = False
     
-    screen.fill(SKY_BLUE)
-
-    pygame.draw.line(screen, WHITE, (0, floor_y + player_size), (screen_width, floor_y + player_size), 2)
+    pygame.draw.line(screen, BLACK, (0, floor_y + player_size), (screen_width, floor_y + player_size), 2)
     pygame.draw.rect(screen, RED, (rect_x, rect_y, 10, 50))
 
-    player = pygame.draw.rect(screen, BLUE, (player_x, player_y, 50, 50))
+    player = pygame.draw.rect(screen, GREEN, (player_x, player_y, 50, 50))
     pygame.display.flip()
 
     clock.tick(60)
