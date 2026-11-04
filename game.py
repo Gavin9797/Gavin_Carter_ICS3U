@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 pygame.init()
 
@@ -42,7 +43,11 @@ player_size = 50
 velocity_y = 0
 is_jumping = False
 gravity = 0.8
-jump_force =-16
+jump_force =-13
+
+bullets = []
+bullet_speed = 15
+bullet_spawn_timer = 0
 
 running = True
 
@@ -95,6 +100,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    keys = pygame.key.get_pressed()
+
     bg_x = background(bg_x, scroll_speed, screen_width)
 
     screen.blit(bg_image, (bg_x, 0))
@@ -102,14 +109,33 @@ while running:
 
     player_x, player_y, velocity_y, is_jumping = player_movement(player_x, player_y, velocity_y, is_jumping, speed, jump_force, gravity, screen_width, player_size, floor_y)
 
+    # Spawn bullets
+    bullet_spawn_timer += 1
+    if bullet_spawn_timer > random.randint(60, 120):  
+        bullet_y = random.randint(445, 520)          
+        bullets.append(pygame.Rect(screen_width, bullet_y, 25, 12)) # adds bullets to a list
+        bullet_spawn_timer = 0
+
+    
+    for bullet in bullets[:]:
+        bullet.x -= bullet_speed  # Move bullet to the left
+        
+        if bullet.x < -30:
+            # Remove bullet if it goes off-screen
+            bullets.remove(bullet)
+        elif player_rect.colliderect(bullet):
+            # Reset player position on hit and remove bullet
+            player_x = 100
+            player_y = floor_y
+            bullets.remove(bullet)
+        else:
+            # Only draw the bullet if it wasn't removed
+            pygame.draw.rect(screen, RED, bullet)
+
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
     enemy_rect = pygame.Rect(rect_x, rect_y, 10, 50)
-
-    if player_rect.colliderect(enemy_rect):
-        running = False
     
     pygame.draw.line(screen, BLACK, (0, floor_y + player_size), (screen_width, floor_y + player_size), 2)
-    pygame.draw.rect(screen, RED, (rect_x, rect_y, 10, 50))
 
     player = pygame.draw.rect(screen, GREEN, (player_x, player_y, 50, 50))
     pygame.display.flip()
