@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import time
 
 pygame.init()
 
@@ -29,8 +30,8 @@ BLACK = (0, 0, 0)
 SKY_BLUE = (135, 206, 235)
 BLUE = (0, 0, 255)
 
-rect_x = 400
-rect_y = 500
+pow_x = random.randint(200, 500) 
+pow_y = random.randint(450, 500)
 
 #PLAYER STATS AND FLOOR POSITION
 floor_y = 500
@@ -44,6 +45,9 @@ velocity_y = 0
 is_jumping = False
 gravity = 0.8
 jump_force =-13
+
+power_ups = []
+power_up_timer = 0
 
 bullets = []
 bullet_speed = 15
@@ -133,12 +137,39 @@ while running:
             pygame.draw.rect(screen, RED, bullet)
 
     player_rect = pygame.Rect(player_x, player_y, 50, 50)
-    enemy_rect = pygame.Rect(rect_x, rect_y, 10, 50)
-    
+    player = pygame.draw.rect(screen, GREEN, (player_x, player_y, 50, 50))
+
+    Time_slow = pygame.Rect(pow_x, pow_y, 20, 20)
     pygame.draw.line(screen, BLACK, (0, floor_y + player_size), (screen_width, floor_y + player_size), 2)
 
-    player = pygame.draw.rect(screen, GREEN, (player_x, player_y, 50, 50))
+    power_up_timer += 0.5
+
+    if power_up_timer >= random.randint(120, 240):
+        pow_y = random.randint(445, 525)
+        power_ups.append(pygame.Rect(screen_width, pow_y, 20, 20))
+        power_up_timer = 0
+
+    for time_slow in power_ups[:]:
+        time_slow.x -= 2
+
+        pygame.draw.rect(screen, SKY_BLUE, time_slow)
+
+        if player_rect.colliderect(time_slow):
+            bullet_speed = 6
+            power_active = True
+            effect_end_time = pygame.time.get.ticks() + 5000
+            power_ups.remove(time_slow)
+        
+        if power_active and pygame.time.get.ticks() >= effect_end_time:
+            bullet_speed = 15
+            power_active = False
+             
+        elif time_slow.x < -20:
+            power_ups.remove(time_slow)
+            
+        
     pygame.display.flip()
+
 
     clock.tick(60)
 
