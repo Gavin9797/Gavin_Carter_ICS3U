@@ -1,12 +1,13 @@
 import pygame
 import os
 import random
-import time
 
 pygame.init()
 
 # set the directory for the image
+ 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 clock = pygame.time.Clock()
 
@@ -48,6 +49,8 @@ jump_force =-13
 
 power_ups = []
 power_up_timer = 0
+power_active = True
+effect_end_time = 0
 
 bullets = []
 bullet_speed = 15
@@ -142,7 +145,7 @@ while running:
     Time_slow = pygame.Rect(pow_x, pow_y, 20, 20)
     pygame.draw.line(screen, BLACK, (0, floor_y + player_size), (screen_width, floor_y + player_size), 2)
 
-    power_up_timer += 0.5
+    power_up_timer += 0.2
 
     if power_up_timer >= random.randint(120, 240):
         pow_y = random.randint(445, 525)
@@ -157,10 +160,10 @@ while running:
         if player_rect.colliderect(time_slow):
             bullet_speed = 6
             power_active = True
-            effect_end_time = pygame.time.get.ticks() + 5000
+            effect_end_time = pygame.time.get_ticks() + 5000
             power_ups.remove(time_slow)
         
-        if power_active and pygame.time.get.ticks() >= effect_end_time:
+        if power_active and pygame.time.get_ticks() >= effect_end_time:
             bullet_speed = 15
             power_active = False
              
