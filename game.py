@@ -5,23 +5,24 @@ import random
 pygame.init()
 
 # set the directory for the image
- 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 clock = pygame.time.Clock()
-
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Geometry Dash Ripoff")
 
 screen_width = 800
 screen_height = 600
 
+# IMAGE LOADING AND STATS
 bg_image = pygame.image.load("images.png").convert() #load the image
 bg_image = pygame.transform.scale(bg_image, (screen_width, 550)) #set the image to be the same resolution as the screen
-
 bg_x = 0
 scroll_speed = 2
+
+score = 0
+font = pygame.font.Font(None, 36)
 
 #COLORS
 RED = (255, 0, 0)
@@ -47,11 +48,13 @@ is_jumping = False
 gravity = 0.8
 jump_force =-13
 
+#POWER UP STATS AND LIST
 power_ups = []
 power_up_timer = 0
 power_active = True
 effect_end_time = 0
 
+#BULLET STATS AND LIST
 bullets = []
 bullet_speed = 15
 bullet_spawn_timer = 0
@@ -100,7 +103,6 @@ def background(bg_x, scroll_speed, screen_width,):
 
     return bg_x
 
-
 while running:
 
     for event in pygame.event.get():
@@ -135,6 +137,7 @@ while running:
             player_x = 100
             player_y = floor_y
             bullets.remove(bullet)
+            score = 0
         else:
             # Only draw the bullet if it wasn't removed
             pygame.draw.rect(screen, RED, bullet)
@@ -169,8 +172,13 @@ while running:
              
         elif time_slow.x < -20:
             power_ups.remove(time_slow)
+
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
+    score += 1
+    
             
-        
+    
     pygame.display.flip()
 
 
