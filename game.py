@@ -10,7 +10,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Geometry Dash Ripoff")
+pygame.display.set_caption("Geometry Dash Ripoff") #Title for the game
 
 screen_width = 800
 screen_height = 600
@@ -31,6 +31,7 @@ GREEN = (255, 255, 0)
 BLACK = (0, 0, 0)
 SKY_BLUE = (135, 206, 235)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 
 pow_x = random.randint(200, 500) 
 pow_y = random.randint(450, 500)
@@ -56,9 +57,10 @@ effect_end_time = 0
 
 #BULLET STATS AND LIST
 bullets = []
-bullet_speed = 15
+bullet_speed = 8
 bullet_spawn_timer = 0
 
+level = 1
 running = True
 
 #MOVEMENT FUNCION
@@ -138,6 +140,7 @@ while running:
             player_y = floor_y
             bullets.remove(bullet)
             score = 0
+            level = 1
         else:
             # Only draw the bullet if it wasn't removed
             pygame.draw.rect(screen, RED, bullet)
@@ -173,14 +176,31 @@ while running:
         elif time_slow.x < -20:
             power_ups.remove(time_slow)
 
-    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    if level == 1 and score < 1000:
+        scroll_speed = 2
+        bullet_speed = 8
+
+    if score >= 1000 and level == 1:
+        level = 2
+        scroll_speed = 4
+        bullet_speed = 12
+        bullet_spawn_timer += 10
+        bullets.clear()
+        power_active = False
+
+    if score >= 2000 and level == 2:
+        level = 3
+        scroll_speed = 8
+        bullet_speed = 20
+        bullet_spawn_timer += 30
+        bullets.clear()
+        power_active = False
+
+    score_text = font.render(f"Score: {score}   |   level: {level}", True, (255, 255, 255))
     screen.blit(score_text, (10, 10))
     score += 1
-    
-            
-    
-    pygame.display.flip()
 
+    pygame.display.flip()
 
     clock.tick(60)
 
