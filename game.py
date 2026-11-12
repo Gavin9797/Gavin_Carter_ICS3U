@@ -3,9 +3,14 @@ import os
 import random
 
 pygame.init()
+pygame.mixer.init()
 
-# set the directory for the image
+# set the directory for the image and music
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+pygame.mixer_music.load("stereo-madness.mp3")
+pygame.mixer_music.play(loops=-1)
+pygame.mixer_music.set_volume(10)
 
 
 clock = pygame.time.Clock()
@@ -69,9 +74,9 @@ def player_movement(player_x, player_y, velocity_y, is_jumping, speed, jump_forc
     keys = pygame.key.get_pressed()
 
     #MOVEMENT KEYS
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_a]:
         player_x = player_x - speed
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_d]:
         player_x = player_x + speed
     if keys[pygame.K_SPACE] and not is_jumping:
         velocity_y = jump_force
@@ -164,7 +169,7 @@ while running:
         pygame.draw.rect(screen, SKY_BLUE, time_slow)
 
         if player_rect.colliderect(time_slow):
-            bullet_speed = 6
+            bullet_speed = 5
             power_active = True
             effect_end_time = pygame.time.get_ticks() + 5000
             power_ups.remove(time_slow)
@@ -179,6 +184,7 @@ while running:
     if level == 1 and score < 1000:
         scroll_speed = 2
         bullet_speed = 8
+        
 
     if score >= 1000 and level == 1:
         level = 2
